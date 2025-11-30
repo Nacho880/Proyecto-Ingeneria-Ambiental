@@ -328,7 +328,7 @@ export default function ConfiguracionPage() {
                 value={limitesAmbientales.Fe_max}
                 onChange={(e) => setLimitesAmbientales(prev => ({ ...prev, Fe_max: e.target.value }))}
                 unit="mg/L"
-                hint="Límite interno (no regulado explícitamente)"
+                helpText="Límite interno (no regulado explícitamente)"
                 disabled={normativaSeleccionada !== 'personalizado'}
               />
               <Input
