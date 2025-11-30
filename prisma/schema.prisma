@@ -1,0 +1,135 @@
+// Sistema de Monitoreo de Lixiviación de Níquel
+// Base de datos PostgreSQL (Neon)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Tabla principal de lotes de producción
+model Lote {
+  id              String   @id @default(cuid())
+  numeroLote      String   @unique
+  fechaCreacion   DateTime @default(now())
+  fechaCierre     DateTime?
+  estado          String   @default("en_proceso") // en_proceso, aprobado, rechazado
+  
+  // Relaciones
+  datosProceso    DatoProceso[]
+  datosCalidad    DatoCalidad[]
+  datosAmbientales DatoAmbiental[]
+  calculos        Calculo[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Datos del proceso de lixiviación
+model DatoProceso {
+  id                    String   @id @default(cuid())
+  loteId                String
+  lote                  Lote     @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  
+  // Variables de entrada
+  phReactor             Float    // pH del reactor
+  temperaturaReactor    Float    // °C
+  masaConcentrado       Float    // kg
+  volumenSolucion       Float    // L
+  acidoSulfurico        Float    // kg o L agregado
+  
+  timestamp             DateTime @default(now())
+  createdAt             DateTime @default(now())
+}
+
+// Datos de calidad del producto
+model DatoCalidad {
+  id              String   @id @default(cuid())
+  loteId          String
+  lote            Lote     @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  
+  // Variables de calidad
+  porcentajeNi    Float    // %Ni del producto final
+  impurezaFe      Float    // ppm
+  impurezaCu      Float    // ppm
+  impurezaZn      Float    // ppm
+  humedad         Float    // %
+  
+  timestamp       DateTime @default(now())
+  createdAt       DateTime @default(now())
+}
+
+// Datos ambientales
+model DatoAmbiental {
+  id                String   @id @default(cuid())
+  loteId            String
+  lote              Lote     @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  
+  // Variables ambientales
+  phEfluente        Float    // pH del efluente
+  niEfluente        Float    // mg/L
+  feEfluente        Float    // mg/L
+  cuEfluente        Float    // mg/L
+  znEfluente        Float    // mg/L
+  caudalEfluente    Float    // m³/día
+  aguaRecirculada   Float    // m³/día - agua que se recircula
+  aguaFresca        Float    // m³/día - agua fresca consumida
+  
+  timestamp         DateTime @default(now())
+  createdAt         DateTime @default(now())
+}
+
+// Cálculos automáticos
+model Calculo {
+  id                      String   @id @default(cuid())
+  loteId                  String
+  lote                    Lote     @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  
+  // KPIs calculados
+  rendimientoLixiviacion  Float?   // %
+  recuperacionNi          Float?   // %
+  consumoEspecificoAcido  Float?   // kg/t
+  consumoAgua             Float?   // m³/t
+  indiceCircularidadAgua  Float?   // %
+  cargaContaminanteNi     Float?   // kg Ni/día
+  purezaTotal             Float?   // %
+  gradoBateria            Boolean? // true si cumple grado batería
+  
+  // Cumplimiento
+  cumplimientoPH          Boolean?
+  cumplimientoMetales     Boolean?
+  cumplimientoGeneral     Boolean?
+  
+  timestamp               DateTime @default(now())
+  createdAt               DateTime @default(now())
+}
+
+// Límites ambientales configurables
+model LimiteAmbiental {
+  id              String   @id @default(cuid())
+  parametro       String   @unique // pH_min, pH_max, Ni_max, Fe_max, Cu_max, Zn_max
+  valor           Float
+  unidad          String
+  descripcion     String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Especificaciones de calidad para grado batería
+model EspecificacionCalidad {
+  id              String   @id @default(cuid())
+  parametro       String   @unique // Ni_min, Fe_max, Cu_max, Zn_max, Humedad_max
+  valor           Float
+  unidad          String
+  descripcion     String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+
