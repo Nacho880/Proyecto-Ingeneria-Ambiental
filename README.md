@@ -1,291 +1,213 @@
-# 🏪 Sistema de Gestión de Ferretería
+# NiSO₄ - Sistema de Monitoreo de Lixiviación de Sulfato de Níquel
 
-Sistema web desarrollado en Django para la gestión integral de una ferretería, incluyendo inventario, ventas, compras, proveedores y reportes.
+Sistema de dashboard industrial para monitoreo ambiental y de calidad del proceso de lixiviación de níquel para producción de sulfato de níquel grado batería.
 
-**Desarrollado por:** [Cristopher Retamales Pedreros, Bianca Torres Rivadeneira, Paz Pérez Avaria, Ignacio Ortega Bustamante, Maximiliano Campos Camimil]
+![Dashboard Preview](https://via.placeholder.com/800x400/0a1929/4caf50?text=NiSO₄+Dashboard)
 
-## 📋 Características
+## 🚀 Características
 
-- **Gestión de Productos**: Inventario con stock mínimo, categorías
-- **Ventas**: Registro de ventas, boletas, reembolsos
-- **Compras**: Gestión de compras a proveedores
-- **Proveedores**: Catálogo de proveedores y productos
-- **Usuarios**: Sistema de autenticación y perfiles
-- **Estadísticas**: Reportes y análisis de ventas
-- **Categorías**: Organización de productos por categorías
+### Panel de Proceso
+- Monitoreo en tiempo real de pH, temperatura, presión
+- Gráficos de tendencia con actualización automática
+- Semáforos de estado (verde/amarillo/rojo)
+- Control de parámetros operativos
 
-## 🛠️ Tecnologías
+### Panel de Calidad (QC)
+- Análisis de % Níquel e impurezas
+- Clasificación automática grado batería vs estándar
+- Estado de lotes (aprobado/rechazado)
+- Tendencias históricas de calidad
 
-- **Backend**: Django 4.x
-- **Base de Datos**: MySQL
-- **Frontend**: HTML, CSS, JavaScript, Bootstrap
-- **Control de Versiones**: Git & GitHub
+### Panel Ambiental
+- pH y metales en efluente vs límites legales
+- Índice de circularidad del agua
+- Consumo de recursos (agua, ácido, energía)
+- Carga contaminante descargada
+
+### Panel de Trazabilidad
+- Historial completo de todos los lotes
+- Búsqueda y filtrado avanzado
+- Certificados descargables
+- Auditoría de datos
+
+### Cálculos Automáticos de KPIs
+- Rendimiento de lixiviación (%)
+- Recuperación de níquel (%)
+- Consumo específico de ácido (kg/t)
+- Consumo de agua (m³/t)
+- Índice de circularidad del agua (%)
+- Carga contaminante del efluente (kg Ni/día)
 
 ## 📋 Requisitos Previos
 
-Antes de comenzar, asegúrate de tener instalado:
+- Node.js 18.x o superior
+- npm o yarn
 
-- **Python 3.8+**
-- **Git**
-- **MySQL Server**
-- **Editor de código** (VSCode, PyCharm, etc.)
+## 🛠️ Instalación
 
-## 🚀 Instalación
+1. **Clonar o descargar el proyecto**
 
-### 1. Clonar el repositorio
+2. **Instalar dependencias**
 ```bash
-git clone https://github.com/Reta-001/management-system.git
-cd management-system/proyecto_principal
+npm install
 ```
 
-### 2. Crear entorno virtual
+3. **Configurar la base de datos**
 ```bash
-python -m venv venv
+# Generar el cliente de Prisma
+npm run db:generate
+
+# Crear las tablas en la base de datos
+npm run db:push
+
+# (Opcional) Cargar datos de ejemplo
+npm run db:seed
 ```
 
-### 3. Activar entorno virtual
-**Windows:**
+4. **Iniciar el servidor de desarrollo**
 ```bash
-venv\Scripts\activate
+npm run dev
 ```
 
-**Linux/Mac:**
-```bash
-source venv/bin/activate
+5. **Abrir en el navegador**
 ```
-
-### 4. Instalar dependencias
-```bash
-pip install -r requirements.txt
+http://localhost:3000
 ```
-
-### 5. Configurar base de datos
-1. Crear una base de datos MySQL llamada `ferreteria_db`
-2. Copiar `.env.example` a `.env`
-3. Editar `.env` con tus credenciales de base de datos
-
-### 6. Ejecutar migraciones
-```bash
-python manage.py migrate
-```
-
-### 7. Crear superusuario (opcional)
-```bash
-python manage.py createsuperuser
-```
-
-### 8. Ejecutar el servidor
-```bash
-python manage.py runserver
-```
-
-El proyecto estará disponible en: http://127.0.0.1:8000/
 
 ## 📁 Estructura del Proyecto
 
 ```
-proyecto_principal/
-├── categoria/          # Gestión de categorías de productos
-├── compras/           # Sistema de compras a proveedores
-├── estadistica/       # Reportes y estadísticas
-├── home/              # Página principal y modelos base
-├── producto/          # Gestión de productos
-├── proveedor/         # Gestión de proveedores
-├── usuario/           # Sistema de usuarios y autenticación
-├── venta/             # Sistema de ventas y boletas
-└── proyecto_principal/ # Configuración principal de Django
+├── prisma/
+│   ├── schema.prisma      # Esquema de base de datos
+│   └── seed.ts            # Datos iniciales
+├── src/
+│   ├── app/
+│   │   ├── api/           # API Routes
+│   │   │   ├── lotes/     # CRUD de lotes
+│   │   │   └── estadisticas/
+│   │   ├── page.tsx       # Dashboard principal
+│   │   ├── nuevo-lote/    # Formulario de registro
+│   │   ├── proceso/       # Panel de proceso
+│   │   ├── calidad/       # Panel de calidad
+│   │   ├── ambiental/     # Panel ambiental
+│   │   ├── trazabilidad/  # Historial de lotes
+│   │   ├── reportes/      # Análisis y KPIs
+│   │   └── configuracion/ # Ajustes del sistema
+│   ├── components/
+│   │   ├── ui/            # Componentes reutilizables
+│   │   │   ├── Card.tsx
+│   │   │   ├── Charts.tsx
+│   │   │   ├── Form.tsx
+│   │   │   └── StatusLight.tsx
+│   │   └── layout/        # Layout del dashboard
+│   │       ├── Sidebar.tsx
+│   │       └── DashboardLayout.tsx
+│   └── lib/
+│       ├── prisma.ts      # Cliente de base de datos
+│       └── calculos.ts    # Lógica de KPIs
+└── package.json
 ```
 
-## 🔧 Configuración de Variables de Entorno
+## 🔧 Configuración
 
-Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+### Variables de Entorno (opcional)
+
+Crear un archivo `.env` en la raíz:
 
 ```env
-DEBUG=True
-SECRET_KEY=tu_clave_secreta_aqui
-DATABASE_NAME=ferreteria_db
-DATABASE_USER=tu_usuario_mysql
-DATABASE_PASSWORD=tu_password_mysql
-DATABASE_HOST=localhost
-DATABASE_PORT=3306
+DATABASE_URL="file:./prisma/dev.db"
 ```
 
-## 📝 Comandos Útiles
+### Límites Configurables
 
-### Desarrollo
-```bash
-# Ejecutar servidor de desarrollo
-python manage.py runserver
+Los límites ambientales y de calidad se pueden ajustar desde:
+- **Panel de Configuración** en la aplicación
+- **Base de datos** en las tablas `LimiteAmbiental` y `EspecificacionCalidad`
 
-# Crear migraciones después de cambios en modelos
-python manage.py makemigrations
+## 📊 API Endpoints
 
-# Aplicar migraciones
-python manage.py migrate
+### Lotes
+- `GET /api/lotes` - Listar todos los lotes
+- `POST /api/lotes` - Crear nuevo lote
+- `GET /api/lotes/[id]` - Obtener lote específico
+- `PUT /api/lotes/[id]` - Actualizar lote
+- `DELETE /api/lotes/[id]` - Eliminar lote
+- `GET /api/lotes/[id]/certificado` - Descargar certificado
 
-# Crear superusuario
-python manage.py createsuperuser
+### Estadísticas
+- `GET /api/estadisticas?periodo=mes` - Obtener KPIs del período
 
-# Ejecutar tests
-python manage.py test
+## 🧮 Fórmulas de Cálculo
+
+### Rendimiento de Lixiviación
+```
+Rendimiento (%) = (Ni recuperado / Ni en concentrado) × 100
 ```
 
-### Git
-```bash
-# Ver estado del repositorio
-git status
-
-# Ver ramas
-git branch
-
-# Cambiar de rama
-git checkout nombre-rama
-
-# Crear nueva rama
-git checkout -b nueva-rama
-
-# Agregar cambios
-git add .
-
-# Hacer commit
-git commit -m "Descripción del cambio"
-
-# Subir cambios
-git push origin nombre-rama
+### Consumo Específico de Ácido
+```
+Consumo (kg/t) = Ácido sulfúrico (kg) / Masa concentrado (t)
 ```
 
-## 🤝 Flujo de Trabajo
-
-### Para colaboradores nuevos:
-1. Clonar el repositorio
-2. Crear rama para tu funcionalidad: `git checkout -b feature/nombre-funcionalidad`
-3. Hacer cambios y commits
-4. Crear Pull Request en GitHub
-5. Esperar revisión y aprobación
-6. Fusionar cambios
-
-### Para cambios diarios:
-1. Actualizar tu rama: `git pull origin main`
-2. Trabajar en tu funcionalidad
-3. Hacer commits frecuentes con mensajes claros
-4. Subir cambios: `git push origin tu-rama`
-
-## 🚀 Despliegue en Vercel
-
-Este proyecto está configurado para desplegarse fácilmente en Vercel. Sigue estos pasos:
-
-### Prerrequisitos
-- Cuenta en [Vercel](https://vercel.com)
-- Repositorio en GitHub
-- Base de datos configurada (PostgreSQL recomendado para producción)
-
-### Pasos para Desplegar
-
-1. **Subir el proyecto a GitHub**
-   ```bash
-   git add .
-   git commit -m "Preparar proyecto para Vercel"
-   git push origin main
-   ```
-
-2. **Conectar con Vercel**
-   - Ve a [vercel.com](https://vercel.com) e inicia sesión
-   - Haz clic en "Add New Project"
-   - Importa tu repositorio de GitHub
-   - Vercel detectará automáticamente la configuración de Django
-
-3. **Configurar Variables de Entorno en Vercel**
-   
-   En la configuración del proyecto en Vercel, agrega las siguientes variables de entorno:
-   
-   ```
-   DEBUG=False
-   SECRET_KEY=tu_clave_secreta_super_segura_aqui
-   DATABASE_URL=postgresql://usuario:password@host:puerto/nombre_db
-   ALLOWED_HOSTS=tu-dominio.vercel.app,tu-dominio.com
-   ```
-   
-   **Nota importante**: 
-   - Genera una nueva `SECRET_KEY` para producción (nunca uses la de desarrollo)
-   - Para `DATABASE_URL`, puedes usar servicios como:
-     - [Vercel Postgres](https://vercel.com/storage/postgres)
-     - [Supabase](https://supabase.com)
-     - [Railway](https://railway.app)
-     - [PlanetScale](https://planetscale.com)
-
-4. **Configurar Build Command (opcional)**
-   
-   En la configuración de Vercel, puedes agregar un Build Command:
-   ```
-   cd proyecto_principal && python manage.py collectstatic --noinput
-   ```
-
-5. **Desplegar**
-   - Vercel desplegará automáticamente tu proyecto
-   - Una vez completado, recibirás una URL de producción
-   - Las migraciones se ejecutarán automáticamente en el primer despliegue
-
-### Ejecutar Migraciones en Vercel
-
-Para ejecutar migraciones en el entorno de producción, puedes usar Vercel CLI:
-
-```bash
-# Instalar Vercel CLI
-npm i -g vercel
-
-# Iniciar sesión
-vercel login
-
-# Ejecutar migraciones
-vercel env pull .env.production
-cd proyecto_principal
-python manage.py migrate
+### Índice de Circularidad del Agua
+```
+Circularidad (%) = (Agua recirculada / Agua total) × 100
 ```
 
-O configurar un script de build que ejecute las migraciones automáticamente.
+### Carga Contaminante
+```
+Carga (kg/día) = Concentración (mg/L) × Caudal (m³/día) / 1000
+```
 
-### Archivos de Configuración para Vercel
+## 🎨 Personalización
 
-El proyecto incluye los siguientes archivos para Vercel:
-- `vercel.json` - Configuración de Vercel
-- `api/index.py` - Handler serverless para Django
-- `runtime.txt` - Versión de Python
-- `build.sh` - Script de build (opcional)
+### Colores del Tema
+Editar `tailwind.config.ts` para modificar la paleta de colores:
 
-## 🐛 Solución de Problemas
+```typescript
+colors: {
+  industrial: { ... },
+  nickel: { ... },
+  sulfur: { ... },
+}
+```
 
-### Error de base de datos:
-- Verificar que MySQL esté corriendo
-- Revisar credenciales en `.env`
-- Ejecutar `python manage.py migrate`
+### Límites de Semáforo
+Editar `src/lib/calculos.ts`:
 
-### Error de dependencias:
-- Activar entorno virtual
-- Reinstalar: `pip install -r requirements.txt`
+```typescript
+export const RANGOS_SEMAFORO = {
+  phReactor: { verde: { min: 1.3, max: 2.0 }, ... },
+  temperatura: { verde: { min: 80, max: 90 }, ... },
+  // ...
+}
+```
 
-### Error de Git:
-- Verificar que estés en la rama correcta: `git branch`
-- Verificar estado: `git status`
+## 📱 Responsive
 
-### Errores en Vercel:
-- Verificar que todas las variables de entorno estén configuradas
-- Revisar los logs de build en el dashboard de Vercel
-- Asegurarse de que `DATABASE_URL` esté correctamente formateada
-- Verificar que `SECRET_KEY` esté configurada
+El dashboard es completamente responsivo:
+- **Desktop**: Sidebar fijo + contenido principal
+- **Tablet**: Sidebar colapsable
+- **Móvil**: Menú hamburguesa + cards apiladas
 
-## 📞 Contacto y Soporte
+## 🔒 Seguridad
 
-- **Repositorio**: https://github.com/Reta-001/management-system
-- **Issues**: Usar la sección Issues de GitHub para reportar bugs o solicitar funcionalidades
-
-## 🙏 Agradecimientos
-
-Agradecemos especialmente a nuestro socio por confiar en nuestro equipo para el desarrollo de este sistema de gestión. Su visión y requerimientos fueron fundamentales para crear una solución que se adapta perfectamente a las necesidades de su negocio.
+Para producción, considerar:
+1. Añadir autenticación (NextAuth.js)
+2. Validación de entrada con Zod
+3. Rate limiting en APIs
+4. HTTPS obligatorio
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+MIT License - Proyecto para uso educativo y de demostración.
+
+## 🤝 Soporte
+
+Para preguntas o mejoras, crear un issue o contactar al equipo de desarrollo.
 
 ---
 
-**¡Gracias por contribuir al proyecto! 🎉** 
+Desarrollado con ❤️ para la industria del níquel
+
+
